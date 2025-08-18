@@ -13,5 +13,14 @@
   "description": "",
   "dependencies": {
     "express": "^4.21.2"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Barryveg24/plantillaNode.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Barryveg24/plantillaNode/issues"
+  },
+  "homepage": "https://github.com/Barryveg24/plantillaNode#readme"
 }
