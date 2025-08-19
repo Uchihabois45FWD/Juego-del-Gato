@@ -1,0 +1,87 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background: url(https://i.pinimg.com/originals/d6/f5/e8/d6f5e861d4d0b70aaa2b9f27eaf12056.gif);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.celda {
+    width: 75px;
+    height: 75px;
+    border: 2px solid;
+    box-shadow: 0 0 0 2px;
+    line-height: 75px;
+    font-size: 50px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#contenedorJuego {
+    font-family: "Permanent Marker", cursive;
+    text-align: center;
+    display: grid;
+    grid-template-columns: 600px;
+    grid-template-rows: 100px;
+    background-color: gray;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#contenedorCeldas {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    width: 225px;
+    margin: auto;
+    gap: 5px;
+}
+
+.jugador-X {
+    color: #ff4757;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.jugador-O {
+    color: #2ed573; 
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.ganadora {
+    background-color: #ffeaa7; 
+    box-shadow: 0 0 10px #fdcb6e; 
+    transform: scale(1.05);
+    transition: all 0.3s ease;
+}
+
+#reiniciar {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-family: "Permanent Marker", cursive;
+    font-size: 18px;
+    background-color: #2d3436;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#reiniciar:hover {
+    background-color: #0984e3;
+}
+
+#estadoPartida {
+    margin: 15px 0;
+    font-size: 24px;
+    color: #2d3436;
+    min-height: 36px;
+}
+
+.celda:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}

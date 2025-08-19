@@ -1,80 +1,124 @@
-const cells = document.querySelectorAll("celda");
-const statusText = document.querySelector("#statusText");
-const restartBtn = document.querySelector("#restartBtn");
-const winConditions = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6]
-];
-let options = ["", "", "", "", "", "", "", "", ""];
-let currentPlayer = "X";
-let running = false;
+const elementos = {
+    contenedorCeldas: document.getElementById("contenedorCeldas"),
+    estadoJuego: document.getElementById("estadoPartida"),
+    botonReiniciar: document.getElementById("reiniciar")
+};
 
-initializeGame();
+const configuracion = {
+    condicionesVictoria: [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8],
+        [0, 3, 6], [1, 4, 7], [2, 5, 8], 
+        [0, 4, 8], [2, 4, 6]            
+    ],
+    jugadores: ["X", "O"],
+    jugadorInicial: "X"
+};
 
-function initializeGame(){
-    cells.forEach(cell => cell.addEventListener("click", cellClicked));
-    restartBtn.addEventListener("click", restartGame);
-    statusText.textContent = `${currentPlayer}'s turn`;
-    running = true;
-}
-function cellClicked(){
-    const cellIndex = this.getAttribute("cellIndex");
+const estado = {
+    tablero: ["", "", "", "", "", "", "", "", ""],
+    jugadorActual: configuracion.jugadorInicial,
+    enEjecucion: false,
+    celdas: []
+};
 
-    if(options[cellIndex] != "" || !running){
+function iniciarJuego() {
+    estado.celdas = Array.from(elementos.contenedorCeldas.getElementsByClassName("celda"));
+    
+    if (estado.celdas.length !== 9) {
+        console.error("Debe haber exactamente 9 celdas en el tablero");
         return;
     }
+    
+    estado.celdas.forEach(celda => {
+        celda.addEventListener("click", manejarClickCelda);
+    });
+    
+    elementos.botonReiniciar.addEventListener("click", reiniciarJuego);
+    actualizarEstadoJuego(`Turno de ${estado.jugadorActual}`);
+    estado.enEjecucion = true;
+}
 
-    updateCell(this, cellIndex);
-    checkWinner();
+function manejarClickCelda() {
+    const indiceCelda = parseInt(this.getAttribute("cellIndex"));
+    
+    if (!esMovimientoValido(indiceCelda)) return;
+    
+    realizarMovimiento(this, indiceCelda);
+    verificarResultadoJuego();
 }
-function updateCell(cell, index){
-    options[index] = currentPlayer;
-    cell.textContent = currentPlayer;
-}
-function changePlayer(){
-    currentPlayer = (currentPlayer == "X") ? "O" : "X";
-    statusText.textContent = `${currentPlayer}'s turn`;
-}
-function checkWinner(){
-    let roundWon = false;
 
-    for(let i = 0; i < winConditions.length; i++){
-        const condition = winConditions[i];
-        const cellA = options[condition[0]];
-        const cellB = options[condition[1]];
-        const cellC = options[condition[2]];
+function esMovimientoValido(indiceCelda) {
+    return estado.tablero[indiceCelda] === "" && estado.enEjecucion;
+}
 
-        if(cellA == "" || cellB == "" || cellC == ""){
-            continue;
-        }
-        if(cellA == cellB && cellB == cellC){
-            roundWon = true;
-            break;
-        }
-    }
+function realizarMovimiento(elementoCelda, indice) {
+    estado.tablero[indice] = estado.jugadorActual;
+    elementoCelda.textContent = estado.jugadorActual;
+    elementoCelda.classList.add(`jugador-${estado.jugadorActual}`);
+}
 
-    if(roundWon){
-        statusText.textContent = `${currentPlayer} wins!`;
-        running = false;
-    }
-    else if(!options.includes("")){
-        statusText.textContent = `Draw!`;
-        running = false;
-    }
-    else{
-        changePlayer();
+function cambiarJugador() {
+    estado.jugadorActual = estado.jugadorActual === configuracion.jugadores[0] 
+        ? configuracion.jugadores[1] 
+        : configuracion.jugadores[0];
+    actualizarEstadoJuego(`Turno de ${estado.jugadorActual}`);
+}
+
+function verificarResultadoJuego() {
+    if (hayVictoria()) {
+        actualizarEstadoJuego(`¡${estado.jugadorActual} gana!`);
+        estado.enEjecucion = false;
+        resaltarCeldasGanadoras();
+    } else if (hayEmpate()) {
+        actualizarEstadoJuego("¡Empate!");
+        estado.enEjecucion = false;
+    } else {
+        cambiarJugador();
     }
 }
-function restartGame(){
-    currentPlayer = "X";
-    options = ["", "", "", "", "", "", "", "", ""];
-    statusText.textContent = `${currentPlayer}'s turn`;
-    cells.forEach(cell => cell.textContent = "");
-    running = true;
+
+function hayVictoria() {
+    return configuracion.condicionesVictoria.some(condicion => {
+        const [a, b, c] = condicion;
+        return estado.tablero[a] && 
+               estado.tablero[a] === estado.tablero[b] && 
+               estado.tablero[a] === estado.tablero[c];
+    });
 }
+
+function resaltarCeldasGanadoras() {
+    const combinacionGanadora = configuracion.condicionesVictoria.find(condicion => {
+        const [a, b, c] = condicion;
+        return estado.tablero[a] && 
+               estado.tablero[a] === estado.tablero[b] && 
+               estado.tablero[a] === estado.tablero[c];
+    });
+    
+    if (combinacionGanadora) {
+        combinacionGanadora.forEach(indice => {
+            estado.celdas[indice].classList.add("ganadora");
+        });
+    }
+}
+
+function hayEmpate() {
+    return !estado.tablero.includes("");
+}
+
+function actualizarEstadoJuego(mensaje) {
+    elementos.estadoJuego.textContent = mensaje;
+}
+
+function reiniciarJuego() {
+    estado.jugadorActual = configuracion.jugadorInicial;
+    estado.tablero = ["", "", "", "", "", "", "", "", ""];
+    estado.enEjecucion = true;
+    actualizarEstadoJuego(`Turno de ${estado.jugadorActual}`);
+    
+    estado.celdas.forEach(celda => {
+        celda.textContent = "";
+        celda.classList.remove("jugador-X", "jugador-O", "ganadora");
+    });
+}
+
+document.addEventListener("DOMContentLoaded", iniciarJuego);
