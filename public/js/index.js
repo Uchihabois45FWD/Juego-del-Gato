@@ -2,8 +2,10 @@ const elementos = {
   contenedorCeldas: document.getElementById("contenedorCeldas"),
   estadoJuego: document.getElementById("estadoPartida"),
   botonReiniciar: document.getElementById("reiniciar"),
-  botonModo: document.getElementById("cambioModo")
-};
+  botonModo: document.getElementById("cambioModo"),
+  botonReiniciarEstadisticas: document.getElementById("resetStats")
+}
+const STORAGE_KEY = "Estadisticas_gato";
 
 const configuracion = {
   condicionesVictoria: [
@@ -32,6 +34,7 @@ const estado = {
   jugadorActual: configuracion.jugadorInicial,
   enEjecucion: false,
   celdas: [],
+  estadisticas: obtenerEstadisticas()
 };
 
 function iniciarJuego() {
@@ -92,11 +95,64 @@ function verificarResultadoJuego() {
     actualizarEstadoJuego(`¡${estado.jugadorActual} gana!`);
     estado.enEjecucion = false;
     resaltarCeldasGanadoras();
+    if (configuracion.modoActual === configuracion.modosJuego.VS_IA) {
+      if (estado.jugadorActual === configuracion.jugadorHumano) {
+        estado.estadisticas.jugador++;
+      } else {
+        estado.estadisticas.ia++;
+      }
+      estado.estadisticas.total++;
+      guardarEstadisticas();
+      actualizarUIEstadisticas();
+    }
   } else if (hayEmpate()) {
-    actualizarEstadoJuego("¡Empate!");
+    actualizarEstadoJuego("EMPATE");
     estado.enEjecucion = false;
+    if (configuracion.modoActual === configuracion.modosJuego.VS_IA) {
+      estado.estadisticas.empates++;
+      estado.estadisticas.total++;
+      guardarEstadisticas();
+      actualizarUIEstadisticas();
+    }
   } else {
-    cambiarJugador();
+    cambiarJugador()
+  }
+}
+
+function obtenerEstadisticas() {
+  try {
+    const stastGuardadas = localStorage.getItem(STORAGE_KEY);
+    if (stastGuardadas) {
+      return JSON.parse(stastGuardadas);
+    }
+    return {jugador: 0, ia: 0, empates: 0, total: 0};
+  } catch (error) {
+    console.warn("Error leyendo estadisticas:", error);
+    return {jugador: 0, ia: 0, empates: 0, total: 0};
+  }
+}
+
+function guardarEstadisticas() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(estado.estadisticas));
+  } catch (error) {
+    console.error("Error guardando estadisticas:", error);    
+  }
+}
+
+function actualizarUIEstadisticas() {
+  document.getElementById("statsVictorias").textContent = estado.estadisticas.jugador;
+  document.getElementById("statsDerrotas").textContent = estado.estadisticas.ia;
+  document.getElementById("statsEmpates").textContent = estado.estadisticas.empates;
+  document.getElementById("statsTotal").textContent = estado.estadisticas.total;
+  
+}
+
+function resetearEstadisticas() {
+  if (confirm("¿Resetear todas las estadisticas?")) {
+    estado.estadisticas = {jugador: 0, ia: 0, empates: 0, total: 0}
+    guardarEstadisticas()
+    actualizarUIEstadisticas()
   }
 }
 
@@ -195,4 +251,8 @@ function alternarModoJuego() {
   }
   reiniciarJuego();
 }
-document.addEventListener("DOMContentLoaded", iniciarJuego);
+document.addEventListener("DOMContentLoaded", () => {
+  iniciarJuego();
+  actualizarUIEstadisticas();
+});
+window.resetearEstadisticas = resetearEstadisticas;
