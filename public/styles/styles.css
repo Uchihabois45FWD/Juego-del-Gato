@@ -1,54 +1,71 @@
 body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
-    background: url(https://i.pinimg.com/originals/d6/f5/e8/d6f5e861d4d0b70aaa2b9f27eaf12056.gif);
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+    url('https://i.pinimg.com/originals/d6/f5/e8/d6f5e861d4d0b70aaa2b9f27eaf12056.gif');
     background-repeat: no-repeat;
     background-size: cover;
-}
-.celda {
-    width: 75px;
-    height: 75px;
-    border: 2px solid;
-    box-shadow: 0 0 0 2px;
-    line-height: 75px;
-    font-size: 50px;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    background-attachment: fixed;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    font-family: 'Permanent Marker', cursive;
 }
 
-#contenedorJuego {
-    font-family: "Permanent Marker", cursive;
-    text-align: center;
-    display: grid;
-    grid-template-columns: 600px;
-    grid-template-rows: 100px;
-    background-color: gray;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+.cuadro {
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 500px;
+    margin: 50px auto;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
 #contenedorCeldas {
     display: grid;
     grid-template-columns: repeat(3, auto);
-    width: 225px;
+    width: 250px;
     margin: auto;
     gap: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 20px auto;
+}
+
+.celda {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 75px;
+    height: 75px;
+    font-size: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(3px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+}
+
+.celda:hover {
+    background: rgba(255, 255, 255, 0.12);
+    transform: scale(1.05);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 .jugador-X {
-    color: #ff4757;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    color: rgba(255, 71, 87, 0.9);
+    text-shadow: 0 0 10px rgba(255, 71, 87, 0.5);
 }
 
 .jugador-O {
-    color: #2ed573; 
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    color: rgba(46, 213, 115, 0.9);
+    text-shadow: 0 0 10px rgba(46, 213, 115, 0.5);
 }
 
 .ganadora {
@@ -80,8 +97,4 @@ body {
     font-size: 24px;
     color: #2d3436;
     min-height: 36px;
-}
-
-.celda:hover {
-    background-color: rgba(255, 255, 255, 0.2);
 }
