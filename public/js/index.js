@@ -3,8 +3,7 @@ const elementos = {
   estadoJuego: document.getElementById("estadoPartida"),
   botonReiniciar: document.getElementById("reiniciar"),
   botonModo: document.getElementById("cambioModo"),
-  botonReiniciarEstadisticas: document.getElementById("resetStats")
-}
+};
 const STORAGE_KEY = "Estadisticas_gato";
 
 const configuracion = {
@@ -22,7 +21,7 @@ const configuracion = {
   jugadorInicial: "X",
   modosJuego: {
     MULTIJUGADOR: "multijugador",
-    VS_IA: "vs_IA"
+    VS_IA: "vs_IA",
   },
   modoActual: "multijugador",
   jugadorHumano: "X",
@@ -34,7 +33,7 @@ const estado = {
   jugadorActual: configuracion.jugadorInicial,
   enEjecucion: false,
   celdas: [],
-  estadisticas: obtenerEstadisticas()
+  estadisticas: obtenerEstadisticas(),
 };
 
 function iniciarJuego() {
@@ -52,7 +51,7 @@ function iniciarJuego() {
   });
 
   elementos.botonReiniciar.addEventListener("click", reiniciarJuego);
-  elementos.botonModo.addEventListener("click", alternarModoJuego)
+  elementos.botonModo.addEventListener("click", alternarModoJuego);
   actualizarEstadoJuego(`Turno de ${estado.jugadorActual}`);
   estado.enEjecucion = true;
 }
@@ -83,9 +82,11 @@ function cambiarJugador() {
       : configuracion.jugadores[0];
   actualizarEstadoJuego(`Turno de ${estado.jugadorActual}`);
 
-  if (configuracion.modoActual === configuracion.modosJuego.VS_IA &&
+  if (
+    configuracion.modoActual === configuracion.modosJuego.VS_IA &&
     estado.jugadorActual === configuracion.jugadorIA &&
-    estado.enEjecucion) {
+    estado.enEjecucion
+  ) {
     jugarTurnoIA();
   }
 }
@@ -98,16 +99,21 @@ function verificarResultadoJuego() {
     if (configuracion.modoActual === configuracion.modosJuego.VS_IA) {
       if (estado.jugadorActual === configuracion.jugadorHumano) {
         estado.estadisticas.jugador++;
+        animarPersonajes("jugador");
       } else {
         estado.estadisticas.ia++;
+        animarPersonajes("ia");
       }
       estado.estadisticas.total++;
       guardarEstadisticas();
       actualizarUIEstadisticas();
+    } else {
+      animarPersonajes(estado.jugadorActual);
     }
   } else if (hayEmpate()) {
     actualizarEstadoJuego("EMPATE");
     estado.enEjecucion = false;
+    animarPersonajes("empate");
     if (configuracion.modoActual === configuracion.modosJuego.VS_IA) {
       estado.estadisticas.empates++;
       estado.estadisticas.total++;
@@ -115,7 +121,7 @@ function verificarResultadoJuego() {
       actualizarUIEstadisticas();
     }
   } else {
-    cambiarJugador()
+    cambiarJugador();
   }
 }
 
@@ -125,10 +131,10 @@ function obtenerEstadisticas() {
     if (stastGuardadas) {
       return JSON.parse(stastGuardadas);
     }
-    return {jugador: 0, ia: 0, empates: 0, total: 0};
+    return { jugador: 0, ia: 0, empates: 0, total: 0 };
   } catch (error) {
     console.warn("Error leyendo estadisticas:", error);
-    return {jugador: 0, ia: 0, empates: 0, total: 0};
+    return { jugador: 0, ia: 0, empates: 0, total: 0 };
   }
 }
 
@@ -136,23 +142,24 @@ function guardarEstadisticas() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(estado.estadisticas));
   } catch (error) {
-    console.error("Error guardando estadisticas:", error);    
+    console.error("Error guardando estadisticas:", error);
   }
 }
 
 function actualizarUIEstadisticas() {
-  document.getElementById("statsVictorias").textContent = estado.estadisticas.jugador;
+  document.getElementById("statsVictorias").textContent =
+    estado.estadisticas.jugador;
   document.getElementById("statsDerrotas").textContent = estado.estadisticas.ia;
-  document.getElementById("statsEmpates").textContent = estado.estadisticas.empates;
+  document.getElementById("statsEmpates").textContent =
+    estado.estadisticas.empates;
   document.getElementById("statsTotal").textContent = estado.estadisticas.total;
-  
 }
 
 function resetearEstadisticas() {
   if (confirm("¿Resetear todas las estadisticas?")) {
-    estado.estadisticas = {jugador: 0, ia: 0, empates: 0, total: 0}
-    guardarEstadisticas()
-    actualizarUIEstadisticas()
+    estado.estadisticas = { jugador: 0, ia: 0, empates: 0, total: 0 };
+    guardarEstadisticas();
+    actualizarUIEstadisticas();
   }
 }
 
@@ -204,6 +211,7 @@ function reiniciarJuego() {
     celda.textContent = "";
     celda.classList.remove("jugador-X", "jugador-O", "ganadora");
   });
+  resetearAnimaciones();
 }
 
 function obtenerMovimientosValidos() {
@@ -245,14 +253,62 @@ function alternarModoJuego() {
     configuracion.modoActual = configuracion.modosJuego.VS_IA;
     elementos.botonModo.textContent = "Modo: VS IA";
     elementos.botonModo.classList.add("modo-ia");
+    document.body.classList.remove("modo-2jugadores")
   } else {
     configuracion.modoActual = configuracion.modosJuego.MULTIJUGADOR;
     elementos.botonModo.textContent = "Modo: 2 Jugadores";
+    document.body.classList.add("modo-2jugadores")
   }
+  resetearAnimaciones()
   reiniciarJuego();
+}
+function animarPersonajes(ganador) {
+  const imgJugador = document.getElementById("jotaro");
+  const imgIA = document.getElementById("dio");
+
+  if (configuracion.modoActual === configuracion.modosJuego.VS_IA) {
+    if (ganador === "jugador") {
+      imgJugador.classList.add("victoria");
+      imgIA.classList.add("derrota");
+    } else if (ganador === "ia") {
+      imgJugador.classList.add("derrota");
+      imgIA.classList.add("victoria");
+    } else if (ganador === "empate") {
+      imgJugador.classList.add("derrota");
+      imgIA.classList.add("derrota");
+    }
+  } else {
+    if (ganador === "X") {
+      imgJugador.classList.add("victoria");
+      imgIA.classList.add("derrota");
+    } else if (ganador === "O") {
+      imgJugador.classList.add("derrota");
+      imgIA.classList.add("victoria");
+    } else if (ganador === "empate") {
+      imgJugador.classList.add("derrota");
+      imgIA.classList.add("derrota");
+    }
+  }
+}
+
+function resetearAnimaciones() {
+  const imgJugador = document.getElementById("jotaro");
+  const imgIA = document.getElementById("dio");
+
+  imgJugador.classList.remove("victoria", "derrota");
+  imgIA.classList.remove("victoria", "derrota");
+
+    imgJugador.style.transform = '';
+    imgIA.style.transform = '';
+    imgJugador.style.filter = '';
+    imgIA.style.filter = '';
 }
 document.addEventListener("DOMContentLoaded", () => {
   iniciarJuego();
   actualizarUIEstadisticas();
+
+  if (configuracion.modoActual === configuracion.modosJuego.MULTIJUGADOR) {
+    document.body.classList.add("modo-2jugadores")
+  }
 });
 window.resetearEstadisticas = resetearEstadisticas;

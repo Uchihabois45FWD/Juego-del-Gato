@@ -9,7 +9,7 @@
 <body>
 <div class="cuadro">
     <div id="contenedorJuego">
-        <h1>Gato</h1>
+        <h1>Jojo Tic Tac Toe</h1>
         <div id="contenedorCeldas">
             <div cellIndex="0" class="celda"></div>
             <div cellIndex="1" class="celda"></div>
@@ -26,17 +26,31 @@
         <button id="cambioModo">Modo 2 Jugadores</button>
     </div>
 
-    <h3>Estadisticas</h3>
     <div id="estadisticasContainer">
-        <span class="statValue jugadorStat" id="statsVictorias">0</span>
-        <span class="statValue iaStat" id="statsDerrotas">0</span>
-        <span class="statValue empateStat" id="statsEmpates">0</span>
-        <span class="statValue totalStat" id="statsTotal">0</span>
-        <button onclick="resetearEstadisticas()">🗑️ Resetear Stats</button>
+        <h3>Estadisticas</h3>
+        <ul>
+            <li class="jugadorStats">
+                <h4>Jugador</h4>
+                 <span class="statValue jugadorStat" id="statsVictorias">0</span>
+            </li>
+            <li class="iaStats" >
+                <h4>IA</h4>
+                <span class="statValue iaStat" id="statsDerrotas">0</span>
+            </li>
+            <li class="empateStats">
+                <h4>Empates</h4>
+                <span class="statValue empateStat" id="statsEmpates">0</span>
+            </li>
+            <li class="totalStats">
+                <h4>Total de partidas</h4>
+                <span class="statValue totalStat" id="statsTotal">0</span>
+            </li>
+        </ul>
+        <button onclick="resetearEstadisticas()" class="resetearEstadisticas">🗑️ Resetear Stats</button>
     </div>
 </div>
-    <img src="../IMGS/Jotaro-portait.png" alt="">
-    <img src="../IMGS/download-removebg-preview.png" alt="">
+    <img id="jotaro" src="../IMGS/Jotaro-portait.png" alt="">
+    <img id="dio" src="../IMGS/download-removebg-preview.png" alt="">
 
 <script type="module" src="../js/index.js"></script>
 </body>
